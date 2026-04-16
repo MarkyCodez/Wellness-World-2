@@ -3,9 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, User, Target, Shield, Bell } from 'lucide-react';
+import { ArrowLeft, User, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PrivacySection from '@/components/settings/PrivacySection';
+import DataManagement from '@/components/settings/DataManagement';
+import AppPreferences from '@/components/settings/AppPreferences';
+import WearableConnect from '@/components/dashboard/WearableConnect';
 
 const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -22,81 +25,59 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <Button variant="ghost" onClick={() => navigate('/')} className="mb-4">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-        </Button>
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
-        <div className="flex items-center gap-6 mb-8">
-          <div className="w-24 h-24 bg-rose-100 rounded-full flex items-center justify-center border-4 border-white shadow-sm">
-            <User className="w-12 h-12 text-rose-500" />
+  return (
+    <div className="min-h-screen bg-slate-50 pb-12">
+      <header className="bg-white border-b border-slate-100 px-6 py-4 sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="rounded-full">
+            <ArrowLeft className="w-5 h-5 text-slate-400" />
+          </Button>
+          <h1 className="text-xl font-bold text-slate-800">Settings & Privacy</h1>
+        </div>
+      </header>
+
+      <main className="max-w-2xl mx-auto px-6 py-8 space-y-8">
+        {/* User Header */}
+        <div className="flex items-center gap-6 p-6 bg-white rounded-[2.5rem] shadow-sm border border-slate-100">
+          <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center border-4 border-white shadow-sm shrink-0">
+            <User className="w-10 h-10 text-rose-500" />
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-slate-800">{profile?.full_name || 'Wellness Explorer'}</h1>
-            <p className="text-slate-500">Member since {new Date(profile?.updated_at).toLocaleDateString()}</p>
+          <div className="overflow-hidden">
+            <h2 className="text-2xl font-black text-slate-800 truncate">{profile?.full_name || 'Wellness Explorer'}</h2>
+            <p className="text-sm text-slate-400 font-medium">Member since {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : 'today'}</p>
           </div>
         </div>
 
-        <div className="grid gap-6">
-          <Card className="rounded-[2rem] border-none shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Target className="w-5 h-5 text-rose-500" /> Your Goals
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              {profile?.goals?.map((goal: string) => (
-                <span key={goal} className="px-4 py-2 bg-rose-50 text-rose-600 rounded-full text-sm font-medium">
-                  {goal}
-                </span>
-              ))}
-            </CardContent>
-          </Card>
+        <PrivacySection />
+        
+        <div className="space-y-6">
+          <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest px-2">App Settings</h3>
+          <AppPreferences />
+          <WearableConnect />
+        </div>
 
-          <Card className="rounded-[2rem] border-none shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Shield className="w-5 h-5 text-indigo-500" /> Privacy & Data
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-slate-500">
-                Your data is encrypted and stored securely. You own your health information.
-              </p>
-              <Button variant="outline" className="w-full rounded-xl">Export My Data</Button>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-[2rem] border-none shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Bell className="w-5 h-5 text-amber-500" /> Notifications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                <span className="font-medium text-slate-700">Daily Reminders</span>
-                <div className="w-12 h-6 bg-rose-500 rounded-full relative">
-                  <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="space-y-6">
+          <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest px-2">Account & Data</h3>
+          <DataManagement />
         </div>
 
         <Button 
           variant="destructive" 
-          className="w-full rounded-xl py-6 mt-8 opacity-50 hover:opacity-100"
-          onClick={async () => {
-            await supabase.auth.signOut();
-            navigate('/');
-          }}
+          className="w-full rounded-2xl py-8 text-lg font-bold shadow-lg shadow-rose-100 transition-all hover:scale-[1.02]"
+          onClick={handleSignOut}
         >
-          Sign Out
+          <LogOut className="w-5 h-5 mr-2" /> Sign Out
         </Button>
-      </div>
+
+        <p className="text-center text-[10px] text-slate-400 font-medium">
+          Wellness World v1.0.0 • Made with love for your health
+        </p>
+      </main>
     </div>
   );
 };
