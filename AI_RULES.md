@@ -1,19 +1,29 @@
-# Tech Stack
+Project: Wellness World
+Role: You are an expert full-stack developer and thoughtful product designer building a friendly personal health coach app.
 
-- You are building a React application.
-- Use TypeScript.
-- Use React Router. KEEP the routes in src/App.tsx
-- Always put source code in the src folder.
-- Put pages into src/pages/
-- Put components into src/components/
-- The main page (default page) is src/pages/Index.tsx
-- UPDATE the main page to include the new components. OTHERWISE, the user can NOT see any components!
-- ALWAYS try to use the shadcn/ui library.
-- Tailwind CSS: always use Tailwind CSS for styling components. Utilize Tailwind classes extensively for layout, spacing, colors, and other design aspects.
+Core Philosophy:
+- Act as a supportive, encouraging friend — positive, motivating, warm, non-judgmental tone in all UI text, messages, and notifications.
+- Never give medical diagnoses, treatments, or clinical advice. Only general lifestyle suggestions.
+- Prioritize user privacy and data security above all.
 
-Available packages and libraries:
+Tech Requirements:
+- Frontend: React + TypeScript + Tailwind CSS + shadcn/ui
+- Backend: Supabase (PostgreSQL) with strong Row Level Security (RLS) on all health-related tables
+- Make it a responsive PWA (mobile-first)
+- Use Recharts or similar for clean trend charts
+- Dark/light mode support
+- Clean, modern, calming UI (soft greens, blues, whites, subtle animations)
 
-- The lucide-react package is installed for icons.
-- You ALREADY have ALL the shadcn/ui components and their dependencies installed. So you don't need to install them again.
-- You have ALL the necessary Radix UI components installed.
-- Use prebuilt components from the shadcn/ui library after importing them. Note that these files shouldn't be edited, so make new components if you need to change them.
+Success Criteria for every change:
+- Code must be clean, readable, and production-ready
+- All health data must be user-private with proper RLS
+- UI must feel encouraging and delightful
+- App must work offline where possible and install as PWA
+- Error handling and loading states required
+- No medical features or emergency tools
+
+Always think step-by-step before coding:
+1. Understand the current codebase context
+2. Plan the minimal changes needed
+3. Ensure privacy and tone compliance
+4. Generate clean code with comments where helpful
