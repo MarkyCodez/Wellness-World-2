@@ -6,9 +6,10 @@ import { Sparkles, ChefHat, ArrowRight } from 'lucide-react';
 
 interface MealSuggestionsProps {
   goals: string[];
+  onViewRecipe: (recipe: any) => void;
 }
 
-const MealSuggestions = ({ goals = [] }: MealSuggestionsProps) => {
+const MealSuggestions = ({ goals = [], onViewRecipe }: MealSuggestionsProps) => {
   const getSuggestions = () => {
     const suggestions = [];
     
@@ -51,22 +52,26 @@ const MealSuggestions = ({ goals = [] }: MealSuggestionsProps) => {
     <div className="space-y-4">
       <div className="flex items-center gap-2 px-2">
         <ChefHat className="w-5 h-5 text-emerald-500" />
-        <h3 className="font-bold text-slate-800">Suggestions for You</h3>
+        <h3 className="font-bold text-slate-800 dark:text-slate-100">Suggestions for You</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {getSuggestions().map((meal, i) => (
-          <Card key={i} className="rounded-3xl border-none shadow-sm bg-white hover:shadow-md transition-all cursor-pointer group">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-emerald-50 text-emerald-600 rounded-md">
+          <Card 
+            key={i} 
+            className="rounded-[2rem] border-none shadow-sm bg-white dark:bg-slate-900 hover:shadow-xl transition-all cursor-pointer group overflow-hidden"
+            onClick={() => onViewRecipe(meal)}
+          >
+            <CardContent className="p-8">
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-full">
                   {meal.tag}
                 </span>
                 <Sparkles className="w-4 h-4 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
-              <h4 className="font-bold text-slate-800 mb-1">{meal.title}</h4>
-              <p className="text-sm text-slate-500 leading-relaxed">{meal.desc}</p>
-              <div className="mt-4 flex items-center text-xs font-bold text-emerald-500 group-hover:translate-x-1 transition-transform">
-                View Recipe <ArrowRight className="w-3 h-3 ml-1" />
+              <h4 className="font-bold text-xl text-slate-800 dark:text-slate-100 mb-2">{meal.title}</h4>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{meal.desc}</p>
+              <div className="mt-6 flex items-center text-xs font-black text-emerald-500 group-hover:translate-x-2 transition-transform uppercase tracking-widest">
+                View Recipe <ArrowRight className="w-4 h-4 ml-2" />
               </div>
             </CardContent>
           </Card>
