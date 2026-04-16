@@ -26,7 +26,7 @@ const AuthForm = () => {
         showSuccess("Check your email to confirm your account!");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if(error) throw error;
         showSuccess("Welcome back to Wellness World!");
       }
     } catch (error: any) {

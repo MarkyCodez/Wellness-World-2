@@ -11,6 +11,8 @@ import WearableConnect from '../components/dashboard/WearableConnect';
 import FoodLogger from '../components/nutrition/FoodLogger';
 import MealSuggestions from '../components/nutrition/MealSuggestions';
 import NutritionOverview from '../components/nutrition/NutritionOverview';
+import WellnessTip from '../components/dashboard/WellnessTip';
+import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -19,7 +21,6 @@ import {
   Zap, 
   Flame, 
   Settings, 
-  LogOut, 
   User, 
   Heart, 
   Utensils, 
@@ -79,8 +80,6 @@ const Dashboard = () => {
         .order('created_at', { ascending: false });
 
       setNutritionLogs(nutData || []);
-
-      // Mock streak for visual polish
       setStreak(5); 
 
     } catch (error) {
@@ -94,7 +93,7 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  if (loading) return null;
+  if (loading) return <DashboardSkeleton />;
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 md:pb-8">
@@ -116,6 +115,7 @@ const Dashboard = () => {
               size="icon" 
               className="rounded-full bg-slate-50 hover:bg-slate-100" 
               onClick={() => navigate('/profile')}
+              aria-label="Settings"
             >
               <Settings className="w-5 h-5 text-slate-400" />
             </Button>
@@ -219,6 +219,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="space-y-6 sm:space-y-8">
+                <WellnessTip />
                 <WearableConnect />
                 <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                   <div className="flex items-center gap-2 mb-4">
@@ -270,9 +271,8 @@ const Dashboard = () => {
         </Tabs>
       </main>
 
-      {/* Mobile Bottom Nav - PWA Style */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 px-6 py-3 flex justify-around items-center md:hidden z-50 pb-safe">
-        <Button variant="ghost" className="flex flex-col gap-1 h-auto text-rose-500 hover:bg-transparent">
+        <Button variant="ghost" className="flex flex-col gap-1 h-auto text-rose-500 hover:bg-transparent" aria-label="Home">
           <Activity className="w-6 h-6" />
           <span className="text-[10px] font-black uppercase tracking-tighter">Home</span>
         </Button>
@@ -280,6 +280,7 @@ const Dashboard = () => {
           variant="ghost" 
           className="flex flex-col gap-1 h-auto text-slate-400 hover:bg-transparent" 
           onClick={() => navigate('/profile')}
+          aria-label="Settings"
         >
           <User className="w-6 h-6" />
           <span className="text-[10px] font-black uppercase tracking-tighter">Settings</span>

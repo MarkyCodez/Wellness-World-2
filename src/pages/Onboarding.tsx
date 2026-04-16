@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { showSuccess, showError } from '@/utils/toast';
-import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Sparkles, ArrowRight, ArrowLeft, Heart } from 'lucide-react';
 
 const Onboarding = () => {
   const [step, setStep] = useState(1);
@@ -43,7 +43,7 @@ const Onboarding = () => {
       });
 
       if (error) throw error;
-      showSuccess("Profile created! Let's get moving.");
+      showSuccess("Profile created! We're so excited to have you here.");
       navigate('/');
     } catch (error: any) {
       showError(error.message);
@@ -65,8 +65,12 @@ const Onboarding = () => {
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-slate-800">Tell us about yourself</h1>
-              <p className="text-slate-500">This helps us personalize your health journey.</p>
+              <div className="flex items-center gap-2 text-rose-500 mb-2">
+                <Heart className="w-5 h-5 fill-rose-500" />
+                <span className="text-sm font-bold uppercase tracking-wider">Welcome</span>
+              </div>
+              <h1 className="text-3xl font-bold text-slate-800">Let's get to know you</h1>
+              <p className="text-slate-500">This helps us tailor your wellness journey to your unique needs.</p>
             </div>
             <div className="space-y-4">
               <div className="space-y-2">
@@ -74,26 +78,26 @@ const Onboarding = () => {
                 <Input 
                   id="age" 
                   type="number" 
-                  placeholder="25" 
+                  placeholder="e.g. 25" 
                   value={formData.age}
                   onChange={(e) => setFormData({...formData, age: e.target.value})}
-                  className="rounded-xl"
+                  className="rounded-xl py-6"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Gender</Label>
-                <RadioGroup onValueChange={(v) => setFormData({...formData, gender: v})} className="flex gap-4">
-                  <div className="flex items-center space-x-2">
+                <RadioGroup onValueChange={(v) => setFormData({...formData, gender: v})} className="flex flex-wrap gap-4">
+                  <div className="flex items-center space-x-2 bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
                     <RadioGroupItem value="female" id="female" />
-                    <Label htmlFor="female">Female</Label>
+                    <Label htmlFor="female" className="cursor-pointer">Female</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
                     <RadioGroupItem value="male" id="male" />
-                    <Label htmlFor="male">Male</Label>
+                    <Label htmlFor="male" className="cursor-pointer">Male</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
                     <RadioGroupItem value="other" id="other" />
-                    <Label htmlFor="other">Other</Label>
+                    <Label htmlFor="other" className="cursor-pointer">Other</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -104,8 +108,8 @@ const Onboarding = () => {
         {step === 2 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-slate-800">What are your goals?</h1>
-              <p className="text-slate-500">Select all that apply to you.</p>
+              <h1 className="text-3xl font-bold text-slate-800">What are your dreams?</h1>
+              <p className="text-slate-500">Select the goals that resonate most with you right now.</p>
             </div>
             <div className="grid grid-cols-1 gap-3">
               {goalsOptions.map((goal) => (
@@ -121,7 +125,7 @@ const Onboarding = () => {
                     setFormData({...formData, goals: newGoals});
                   }}
                 >
-                  <Checkbox checked={formData.goals.includes(goal)} />
+                  <Checkbox checked={formData.goals.includes(goal)} className="rounded-full" />
                   <span className="font-medium text-slate-700">{goal}</span>
                 </div>
               ))}
@@ -133,18 +137,18 @@ const Onboarding = () => {
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold text-slate-800">Almost there!</h1>
-              <p className="text-slate-500">Describe your current lifestyle in a few words.</p>
+              <p className="text-slate-500">Tell us a little about your current lifestyle. No judgment, just honesty!</p>
             </div>
             <div className="space-y-4">
               <textarea 
-                className="w-full h-32 p-4 rounded-2xl border-2 border-slate-100 focus:border-rose-500 focus:ring-0 transition-all resize-none"
-                placeholder="e.g. I work a desk job but try to walk in the evenings..."
+                className="w-full h-32 p-4 rounded-2xl border-2 border-slate-100 focus:border-rose-500 focus:ring-0 transition-all resize-none text-slate-700"
+                placeholder="e.g. I'm quite active on weekends but sit a lot during the week..."
                 value={formData.lifestyle}
                 onChange={(e) => setFormData({...formData, lifestyle: e.target.value})}
               />
-              <div className="p-4 bg-amber-50 rounded-2xl flex gap-3">
+              <div className="p-4 bg-amber-50 rounded-2xl flex gap-3 border border-amber-100">
                 <Sparkles className="w-5 h-5 text-amber-500 shrink-0" />
-                <p className="text-sm text-amber-700">"Small wins add up! You're building great momentum just by starting today."</p>
+                <p className="text-sm text-amber-800 leading-relaxed">"Every journey begins with a single step. You're doing something wonderful for yourself today."</p>
               </div>
             </div>
           </div>
@@ -152,15 +156,15 @@ const Onboarding = () => {
 
         <div className="flex gap-4 mt-12">
           {step > 1 && (
-            <Button variant="outline" onClick={handleBack} className="flex-1 rounded-xl py-6">
+            <Button variant="outline" onClick={handleBack} className="flex-1 rounded-xl py-6 border-slate-200">
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
           )}
           <Button 
             onClick={step === 3 ? handleSubmit : handleNext} 
-            className="flex-[2] bg-rose-500 hover:bg-rose-600 text-white rounded-xl py-6"
+            className="flex-[2] bg-rose-500 hover:bg-rose-600 text-white rounded-xl py-6 shadow-lg shadow-rose-100"
           >
-            {step === 3 ? "Finish" : "Continue"} <ArrowRight className="w-4 h-4 ml-2" />
+            {step === 3 ? "Let's Begin!" : "Continue"} <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </div>

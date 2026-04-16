@@ -52,7 +52,7 @@ const LogActivity = ({ onSuccess }: LogActivityProps) => {
 
       if (error) throw error;
 
-      showSuccess("Activity logged! Great job today.");
+      showSuccess("Activity logged! You're doing amazing today.");
       setOpen(false);
       onSuccess();
     } catch (error: any) {
@@ -65,78 +65,78 @@ const LogActivity = ({ onSuccess }: LogActivityProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-white text-rose-500 hover:bg-rose-50 rounded-xl font-bold shadow-sm">
+        <Button className="bg-white text-rose-500 hover:bg-rose-50 rounded-xl font-bold shadow-sm border border-rose-100 px-6">
           Log Activity <Plus className="w-4 h-4 ml-2" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] rounded-[2rem]">
+      <DialogContent className="sm:max-w-[425px] rounded-[2.5rem] p-6 sm:p-8">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-slate-800">Log Daily Activity</DialogTitle>
-          <DialogDescription>
-            How are you feeling today? Record your progress below.
+          <DialogTitle className="text-2xl font-bold text-slate-800">How was your day?</DialogTitle>
+          <DialogDescription className="text-slate-500">
+            Every bit of movement counts. Record your progress below.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="steps" className="flex items-center gap-2">
+              <Label htmlFor="steps" className="flex items-center gap-2 text-slate-600 font-bold text-xs uppercase tracking-wider">
                 <Footprints className="w-4 h-4 text-rose-500" /> Steps
               </Label>
               <Input
                 id="steps"
                 type="number"
-                placeholder="10000"
+                placeholder="e.g. 10000"
                 value={formData.steps}
                 onChange={(e) => setFormData({ ...formData, steps: e.target.value })}
-                className="rounded-xl"
+                className="rounded-xl py-6"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="active" className="flex items-center gap-2">
+              <Label htmlFor="active" className="flex items-center gap-2 text-slate-600 font-bold text-xs uppercase tracking-wider">
                 <Zap className="w-4 h-4 text-amber-500" /> Active Mins
               </Label>
               <Input
                 id="active"
                 type="number"
-                placeholder="60"
+                placeholder="e.g. 60"
                 value={formData.active_minutes}
                 onChange={(e) => setFormData({ ...formData, active_minutes: e.target.value })}
-                className="rounded-xl"
+                className="rounded-xl py-6"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="sleep" className="flex items-center gap-2">
+              <Label htmlFor="sleep" className="flex items-center gap-2 text-slate-600 font-bold text-xs uppercase tracking-wider">
                 <Moon className="w-4 h-4 text-indigo-500" /> Sleep (hrs)
               </Label>
               <Input
                 id="sleep"
                 type="number"
                 step="0.5"
-                placeholder="8"
+                placeholder="e.g. 8"
                 value={formData.sleep_hours}
                 onChange={(e) => setFormData({ ...formData, sleep_hours: e.target.value })}
-                className="rounded-xl"
+                className="rounded-xl py-6"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="calories" className="flex items-center gap-2">
+              <Label htmlFor="calories" className="flex items-center gap-2 text-slate-600 font-bold text-xs uppercase tracking-wider">
                 <Flame className="w-4 h-4 text-orange-500" /> Calories
               </Label>
               <Input
                 id="calories"
                 type="number"
-                placeholder="2000"
+                placeholder="e.g. 2000"
                 value={formData.calories_burned}
                 onChange={(e) => setFormData({ ...formData, calories_burned: e.target.value })}
-                className="rounded-xl"
+                className="rounded-xl py-6"
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="sm:justify-center">
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl py-6"
+              className="w-full bg-rose-500 hover:bg-rose-600 text-white rounded-xl py-8 text-lg font-bold shadow-lg shadow-rose-100"
             >
               {loading ? "Saving..." : "Save Progress"}
             </Button>
