@@ -9,6 +9,7 @@ export const fitnessTemplates = [
   { id: 'weight_int_1', goal: 'Weight Management', level: 'Intermediate', activity: 'HIIT Circuit', duration: '35 min', difficulty: 'Challenging', exercises: 'Burpees 45s, Mountain Climbers 45s, Jump Squats 45s, 15s rest' },
   { id: 'energy_beg_1', goal: 'More Energy', level: 'Beginner', activity: 'Morning Flow', duration: '20 min', difficulty: 'Light', exercises: 'Sun Salutations, Cat-Cow, Bird-Dog, Child\'s Pose' },
   { id: 'sleep_beg_1', goal: 'Better Sleep', level: 'Beginner', activity: 'Yin Yoga', duration: '25 min', difficulty: 'Light', exercises: 'Forward Fold, Pigeon Pose, Reclined Twist, Savasana' },
+  
   // ... Imagine 30+ more variations here, categorized by age and lifestyle
 ];
 
