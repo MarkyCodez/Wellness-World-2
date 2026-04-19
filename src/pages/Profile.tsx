@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, User, LogOut, Save, Loader2, Heart, Target, Trash2, Plus } from 'lucide-react';
+import { ArrowLeft, User, LogOut, Save, Loader2, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { showSuccess, showError } from '@/utils/toast';
 import PrivacySection from '@/components/settings/PrivacySection';
@@ -15,11 +15,8 @@ import WearableConnect from '@/components/dashboard/WearableConnect';
 
 const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
-  const [goals, setGoals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [newGoal, setNewGoal] = useState({ title: '', target_value: '', unit: '' });
-  
   const [formData, setFormData] = useState({
     full_name: '',
     age: '',
@@ -31,30 +28,25 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const [profileRes, goalsRes] = await Promise.all([
-          supabase.from('profiles').select('*').eq('id', user.id).single(),
-          supabase.from('goals').select('*').eq('user_id', user.id)
-        ]);
-
-        if (profileRes.data) {
-          setProfile(profileRes.data);
+        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+        if (data) {
+          setProfile(data);
           setFormData({
-            full_name: profileRes.data.full_name || '',
-            age: profileRes.data.age?.toString() || '',
-            gender: profileRes.data.gender || '',
-            goals: profileRes.data.goals || [],
-            dietary_preferences: profileRes.data.dietary_preferences || [],
-            lifestyle_info: profileRes.data.lifestyle_info || ''
+            full_name: data.full_name || '',
+            age: data.age?.toString() || '',
+            gender: data.gender || '',
+            goals: data.goals || [],
+            dietary_preferences: data.dietary_preferences || [],
+            lifestyle_info: data.lifestyle_info || ''
           });
         }
-        if (goalsRes.data) setGoals(goalsRes.data);
       }
       setLoading(false);
     };
-    fetchData();
+    fetchProfile();
   }, []);
 
   const handleSave = async () => {
@@ -82,49 +74,22 @@ const Profile = () => {
     }
   };
 
-  const handleAddGoal = async () => {
-    if (!newGoal.title || !newGoal.target_value) return;
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { data, error } = await supabase.from('goals').insert({
-        user_id: user?.id,
-        title: newGoal.title,
-        target_value: parseInt(newGoal.target_value),
-        unit: newGoal.unit,
-        current_value: 0
-      }).select().single();
-
-      if (error) throw error;
-      setGoals([...goals, data]);
-      setNewGoal({ title: '', target_value: '', unit: '' });
-      showSuccess("New goal set! You've got this.");
-    } catch (error: any) {
-      showError(error.message);
-    }
-  };
-
-  const handleDeleteGoal = async (id: string) => {
-    try {
-      const { error } = await supabase.from('goals').delete().eq('id', id);
-      if (error) throw error;
-      setGoals(goals.filter(g => g.id !== id));
-      showSuccess("Goal removed. Focus on what matters most!");
-    } catch (error: any) {
-      showError(error.message);
-    }
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
   };
 
   if (loading) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-12">
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-6 py-4 sticky top-0 z-10">
+    <div className="min-h-screen bg-slate-50 pb-12">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/')} className="rounded-full">
               <ArrowLeft className="w-5 h-5 text-slate-400" />
             </Button>
-            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Your Profile</h1>
+            <h1 className="text-xl font-bold text-slate-800">Your Profile</h1>
           </div>
           <Button 
             onClick={handleSave} 
@@ -138,18 +103,19 @@ const Profile = () => {
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-8 space-y-8">
-        <div className="flex items-center gap-6 p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-800">
-          <div className="w-24 h-24 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-800 shadow-lg shrink-0">
+        {/* User Header */}
+        <div className="flex items-center gap-6 p-8 bg-white rounded-[2.5rem] shadow-xl border border-slate-100">
+          <div className="w-24 h-24 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full flex items-center justify-center border-4 border-white shadow-lg shrink-0">
             <User className="w-12 h-12 text-white" />
           </div>
           <div className="overflow-hidden">
-            <h2 className="text-3xl font-black text-slate-800 dark:text-slate-100 truncate">{formData.full_name || 'Wellness Explorer'}</h2>
+            <h2 className="text-3xl font-black text-slate-800 truncate">{formData.full_name || 'Wellness Explorer'}</h2>
             <p className="text-sm text-slate-400 font-bold uppercase tracking-wider">Member since {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : 'today'}</p>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 space-y-6">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
             <Heart className="w-5 h-5 text-rose-500" /> Personal Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -175,32 +141,6 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Target className="w-5 h-5 text-rose-500" /> Manage Goals
-          </h3>
-          <div className="space-y-4">
-            {goals.map((goal) => (
-              <div key={goal.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-                <div>
-                  <p className="font-bold text-slate-700 dark:text-slate-200">{goal.title}</p>
-                  <p className="text-xs text-slate-400">{goal.target_value} {goal.unit}</p>
-                </div>
-                <Button variant="ghost" size="icon" onClick={() => handleDeleteGoal(goal.id)} className="text-rose-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20">
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <Input placeholder="Goal title" value={newGoal.title} onChange={(e) => setNewGoal({...newGoal, title: e.target.value})} className="rounded-xl" />
-              <Input placeholder="Target" type="number" value={newGoal.target_value} onChange={(e) => setNewGoal({...newGoal, target_value: e.target.value})} className="rounded-xl" />
-              <Button onClick={handleAddGoal} className="bg-rose-500 hover:bg-rose-600 text-white rounded-xl">
-                <Plus className="w-4 h-4 mr-2" /> Add Goal
-              </Button>
-            </div>
-          </div>
-        </div>
-
         <PrivacySection />
         <AppPreferences />
         <WearableConnect />
@@ -208,7 +148,7 @@ const Profile = () => {
 
         <Button 
           variant="destructive" 
-          className="w-full rounded-2xl py-8 text-lg font-bold shadow-lg shadow-rose-100 dark:shadow-none transition-all hover:scale-[1.02]"
+          className="w-full rounded-2xl py-8 text-lg font-bold shadow-lg shadow-rose-100 transition-all hover:scale-[1.02]"
           onClick={handleSignOut}
         >
           <LogOut className="w-5 h-5 mr-2" /> Sign Out
