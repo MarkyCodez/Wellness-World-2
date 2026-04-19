@@ -98,7 +98,7 @@ export const mindTemplates = [
 export const getPersonalizedPlan = (userProfile: any, recentLogs: any[], type: 'fitness' | 'nutrition' | 'mind') => {
   const primaryGoal = userProfile?.goals?.[0] || 'More Energy';
   const age = userProfile?.age || 30;
-  const level = age > 50 ? 'Beginner' : 'Intermediate'; // Simple logic for level
+ const level = userProfile?.level || (age > 50 ? 'Beginner' : 'Intermediate'); // Simple logic for level
 
   if (type === 'fitness') {
     const filtered = fitnessTemplates.filter(t => t.goal === primaryGoal);
