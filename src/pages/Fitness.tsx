@@ -9,13 +9,16 @@ import FitnessProgress from '@/components/fitness/FitnessProgress';
 import DailyRecommendation from '@/components/fitness/DailyRecommendation';
 import LogActivity from '@/components/dashboard/LogActivity';
 import StreakCounter from '@/components/dashboard/StreakCounter';
-import { Activity, Loader2 } from 'lucide-react';
+import { Activity, Loader2, Settings2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Fitness = () => {
   const [profile, setProfile] = useState<any>(null);
   const [logs, setLogs] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -58,10 +61,16 @@ const Fitness = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100">Your Personalized Fitness Plan</h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">Data-driven insights to help you move better.</p>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Tailored to your goals and recent activity.</p>
           </div>
           <div className="flex items-center gap-3">
-            <StreakCounter count={5} />
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/profile')}
+              className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50"
+            >
+              <Settings2 className="w-4 h-4 mr-2" /> Edit Goals
+            </Button>
             <LogActivity onSuccess={fetchData} />
           </div>
         </div>
@@ -71,9 +80,13 @@ const Fitness = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <DailyRecommendation lastLog={logs[0]} />
-            <WeeklySchedule goals={profile?.goals || []} />
+            <WeeklySchedule goals={profile?.goals || []} age={profile?.age || 30} />
           </div>
           <div className="space-y-8">
+            <div className="flex justify-between items-center px-2">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100">Your Progress</h3>
+              <StreakCounter count={5} />
+            </div>
             <FitnessProgress logs={logs} goals={goals} />
             <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
               <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">Coach's Note</h3>
