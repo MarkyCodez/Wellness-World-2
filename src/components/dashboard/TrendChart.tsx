@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const data = [
   { name: 'Mon', steps: 4000 },
@@ -15,11 +15,11 @@ const data = [
 
 const TrendChart = () => {
   return (
-    <div className="w-full h-[300px] bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+    <div className="w-full h-[300px] bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-bold text-slate-800 text-lg">Weekly Activity</h3>
+        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">Weekly Activity</h3>
         <div className="flex gap-2">
-          <span className="flex items-center gap-1 text-xs font-medium text-slate-500">
+          <span className="flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400">
             <div className="w-2 h-2 rounded-full bg-rose-400" /> Steps
           </span>
         </div>
@@ -32,7 +32,7 @@ const TrendChart = () => {
               <stop offset="95%" stopColor="#fb7185" stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-slate-100 dark:text-slate-800" />
           <XAxis 
             dataKey="name" 
             axisLine={false} 
@@ -42,7 +42,13 @@ const TrendChart = () => {
           />
           <YAxis hide />
           <Tooltip 
-            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+            contentStyle={{ 
+              borderRadius: '12px', 
+              border: 'none', 
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              backgroundColor: 'var(--card)',
+              color: 'var(--card-foreground)'
+            }}
           />
           <Area 
             type="monotone" 

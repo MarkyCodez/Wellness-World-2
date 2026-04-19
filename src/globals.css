@@ -36,33 +36,33 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 47% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 6%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 6%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.4% 10%;
+    --primary: 172 66% 50%;
+    --primary-foreground: 222 47% 4%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217 33% 12%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217 33% 12%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 199 89% 48%;
+    --accent: 172 66% 50%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142.1 70.6% 45.3%;
+    --border: 217 33% 12%;
+    --input: 217 33% 12%;
+    --ring: 172 66% 50%;
   }
 }
 
@@ -71,7 +71,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground transition-colors duration-500;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -82,4 +82,9 @@
 
 .premium-shadow {
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+}
+
+/* Smooth transitions for theme switching */
+.theme-transition * {
+  @apply transition-colors duration-500;
 }
