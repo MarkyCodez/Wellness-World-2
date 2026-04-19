@@ -12,6 +12,7 @@ import WellnessTip from '@/components/dashboard/WellnessTip';
 import { Loader2 } from 'lucide-react';
 
 const Mind = () => {
+  const [profile, setProfile] = useState<any>(null);
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,14 +21,17 @@ const Mind = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: logsRes } = await supabase
-        .from('daily_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('date', { ascending: false })
-        .limit(30);
+      const [profileRes, logsRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', user.id).single(),
+        supabase.from('daily_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false })
+          .limit(30)
+      ]);
 
-      setLogs(logsRes || []);
+      setProfile(profileRes.data);
+      setLogs(logsRes.data || []);
     } catch (error) {
       console.error("Error fetching mind data:", error);
     } finally {
@@ -61,12 +65,12 @@ const Mind = () => {
           </div>
         </div>
 
-        <MindAnalysis logs={logs} />
+        <MindAnalysis logs={logs} profile={profile} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <DailyMindRecommendation lastMood={lastMood} />
-            <WeeklyMindPlan />
+            <WeeklyMindPlan goals={profile?.goals || []} />
           </div>
           <div className="space-y-8">
             <MoodCheckIn />
@@ -74,7 +78,7 @@ const Mind = () => {
             <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
               <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">Coach's Note</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed italic">
-                "Your mind is like a garden. It doesn't need to be perfect; it just needs to be tended to with kindness. You're doing a wonderful job showing up for yourself today."
+                "Your mind is like a garden. It doesn't need to be perfect; it just needs to be tended to with kindness. You're doing a wonderful job showing up for yourself today, {profile?.full_name?.split(' ')[0] || 'friend'}."
               </p>
             </div>
             <WellnessTip />

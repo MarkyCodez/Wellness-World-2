@@ -3,18 +3,41 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Wind, PenLine, TreePine, Heart, Sparkles, Moon, Sun } from 'lucide-react';
+import { Wind, PenLine, TreePine, Heart, Sparkles, Moon, Sun, Coffee } from 'lucide-react';
 
-const WeeklyMindPlan = () => {
-  const schedule = [
-    { day: 'Monday', activity: '5-min Box Breathing', icon: <Wind />, type: 'Calm', why: 'To center yourself for the week ahead.' },
-    { day: 'Tuesday', activity: 'Gratitude Journaling', icon: <PenLine />, type: 'Reflect', why: 'Focusing on the small wins today.' },
-    { day: 'Wednesday', activity: 'Short Nature Walk', icon: <TreePine />, type: 'Connect', why: 'Fresh air to clear mid-week mental fog.' },
-    { day: 'Thursday', activity: 'Loving-Kindness Meditation', icon: <Heart />, type: 'Kindness', why: 'Nurturing a positive inner dialogue.' },
-    { day: 'Friday', activity: 'Digital Detox (1 hour)', icon: <Sparkles />, type: 'Focus', why: 'Reclaiming your attention from screens.' },
-    { day: 'Saturday', activity: 'Creative Expression', icon: <Sun />, type: 'Joy', why: 'Doing something purely for the fun of it.' },
-    { day: 'Sunday', activity: 'Evening Wind-down', icon: <Moon />, type: 'Rest', why: 'Preparing your mind for deep, restorative sleep.' },
-  ];
+interface WeeklyMindPlanProps {
+  goals: string[];
+}
+
+const WeeklyMindPlan = ({ goals = [] }: WeeklyMindPlanProps) => {
+  const primaryGoal = goals[0] || "More Energy";
+
+  const getSchedule = () => {
+    if (primaryGoal === "Stress Reduction" || primaryGoal === "Better Sleep") {
+      return [
+        { day: 'Monday', activity: '5-min Box Breathing', icon: <Wind />, type: 'Calm', why: 'To lower cortisol levels after the weekend.' },
+        { day: 'Tuesday', activity: 'Gratitude Journaling', icon: <PenLine />, type: 'Reflect', why: 'Shifting focus to what is going well.' },
+        { day: 'Wednesday', activity: 'Evening Digital Detox', icon: <Moon />, type: 'Rest', why: 'Preparing your brain for deeper sleep cycles.' },
+        { day: 'Thursday', activity: 'Short Nature Walk', icon: <TreePine />, type: 'Connect', why: 'Grounding your nervous system in nature.' },
+        { day: 'Friday', activity: 'Loving-Kindness Meditation', icon: <Heart />, type: 'Kindness', why: 'Reducing self-criticism and building warmth.' },
+        { day: 'Saturday', activity: 'Creative Play', icon: <Sun />, type: 'Joy', why: 'Releasing tension through unstructured fun.' },
+        { day: 'Sunday', activity: 'Mindful Tea Ritual', icon: <Coffee />, type: 'Presence', why: 'Slowing down to appreciate the small things.' },
+      ];
+    }
+    
+    // Default: Energy / General Wellness
+    return [
+      { day: 'Monday', activity: 'Morning Intention Setting', icon: <Sparkles />, type: 'Focus', why: 'Aligning your energy with your weekly goals.' },
+      { day: 'Tuesday', activity: 'Brisk Mindful Walk', icon: <TreePine />, type: 'Energy', why: 'Combining movement with mental presence.' },
+      { day: 'Wednesday', activity: 'Mid-week Gratitude', icon: <PenLine />, type: 'Reflect', why: 'Boosting mood during the mid-week slump.' },
+      { day: 'Thursday', activity: 'Power Breathing', icon: <Wind />, type: 'Vitality', why: 'Oxygenating your body for a mental boost.' },
+      { day: 'Friday', activity: 'Social Connection', icon: <Heart />, type: 'Connect', why: 'Nurturing the relationships that fuel you.' },
+      { day: 'Saturday', activity: 'Outdoor Exploration', icon: <Sun />, type: 'Adventure', why: 'Expanding your horizons and perspective.' },
+      { day: 'Sunday', activity: 'Restorative Rest', icon: <Moon />, type: 'Recharge', why: 'Ensuring you start the new week fully charged.' },
+    ];
+  };
+
+  const schedule = getSchedule();
 
   return (
     <div className="space-y-4">
