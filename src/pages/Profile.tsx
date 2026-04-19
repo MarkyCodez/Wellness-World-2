@@ -14,17 +14,21 @@ import {
   Target, 
   Plus, 
   Trash2,
-  LogOut
+  LogOut,
+  Calendar,
+  Trophy,
+  Sparkles
 } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [goals, setGoals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [newGoal, setNewGoal] = useState({ title: '', target_value: '', unit: '' });
+  const [newGoal, setNewGoal] = useState({ title: '', target_value: '', unit: '', category: 'Fitness' });
   const [formData, setFormData] = useState({ full_name: '', age: '', gender: '', goals: [] as string[] });
   const navigate = useNavigate();
 
@@ -75,6 +79,38 @@ const Profile = () => {
     }
   };
 
+  const handleAddGoal = async () => {
+    if (!newGoal.title || !newGoal.target_value) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase.from('goals').insert({
+        user_id: user?.id,
+        title: newGoal.title,
+        target_value: parseInt(newGoal.target_value),
+        unit: newGoal.unit,
+        category: newGoal.category,
+        current_value: 0
+      });
+      if (error) throw error;
+      showSuccess("New goal set! You've got this.");
+      setNewGoal({ title: '', target_value: '', unit: '', category: 'Fitness' });
+      fetchData();
+    } catch (error: any) {
+      showError(error.message);
+    }
+  };
+
+  const handleDeleteGoal = async (id: string) => {
+    try {
+      const { error } = await supabase.from('goals').delete().eq('id', id);
+      if (error) throw error;
+      showSuccess("Goal removed. Focus on what matters most!");
+      fetchData();
+    } catch (error: any) {
+      showError(error.message);
+    }
+  };
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate('/');
@@ -84,7 +120,7 @@ const Profile = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in duration-500 pb-20">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100">Your Profile</h1>
           <Button onClick={handleSaveProfile} disabled={saving} className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold">
@@ -120,7 +156,10 @@ const Profile = () => {
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 space-y-6">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Focus Areas</h3>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-amber-500" /> Focus Areas
+          </h3>
+          <p className="text-sm text-slate-500">These areas drive your personalized coaching plans.</p>
           <div className="flex flex-wrap gap-3">
             {goalsOptions.map((goal) => (
               <button
@@ -138,6 +177,54 @@ const Profile = () => {
             ))}
           </div>
         </div>
+
+        <Card className="rounded-[2.5rem] border-none shadow-sm bg-white dark:bg-slate-900">
+          <CardHeader>
+            <CardTitle className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Target className="w-5 h-5 text-rose-500" /> Trackable Goals
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Goal Title</Label>
+                <Input placeholder="e.g. Daily Steps" value={newGoal.title} onChange={(e) => setNewGoal({...newGoal, title: e.target.value})} className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Target Value</Label>
+                <Input type="number" placeholder="10000" value={newGoal.target_value} onChange={(e) => setNewGoal({...newGoal, target_value: e.target.value})} className="rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Unit</Label>
+                <Input placeholder="steps, kg, mins" value={newGoal.unit} onChange={(e) => setNewGoal({...newGoal, unit: e.target.value})} className="rounded-xl" />
+              </div>
+              <div className="flex items-end">
+                <Button onClick={handleAddGoal} className="w-full bg-slate-800 dark:bg-slate-100 dark:text-slate-900 text-white rounded-xl font-bold">
+                  <Plus className="w-4 h-4 mr-2" /> Add Goal
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-4">
+              {goals.map((goal) => (
+                <div key={goal.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white dark:bg-slate-700 rounded-xl">
+                      <Trophy className="w-4 h-4 text-amber-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{goal.title}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{goal.target_value} {goal.unit}</p>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={() => handleDeleteGoal(goal.id)} className="text-slate-300 hover:text-rose-500">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <Button variant="destructive" className="w-full rounded-2xl py-8 text-lg font-bold shadow-lg shadow-rose-100 dark:shadow-none" onClick={handleSignOut}>
           <LogOut className="w-5 h-5 mr-2" /> Sign Out
