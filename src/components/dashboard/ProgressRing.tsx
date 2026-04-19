@@ -33,18 +33,25 @@ const ProgressRing = ({ value, target, label, icon, color, unit }: ProgressRingP
     }
   }, [percentage, circumference, color, value]);
 
+  const getEncouragement = () => {
+    if (percentage >= 100) return "Goal crushed! 🏆";
+    if (percentage >= 75) return "Almost there! ✨";
+    if (percentage >= 50) return "Halfway point! 💪";
+    if (percentage > 0) return "Great start! 🚀";
+    return "Ready to go? 🏁";
+  };
+
   return (
-    <div className="flex flex-col items-center p-6 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-md transition-all duration-300 group">
+    <div className="flex flex-col items-center p-6 bg-white rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 group">
       <div className="relative w-32 h-32 flex items-center justify-center">
         <svg className="w-full h-full transform -rotate-90">
           <circle
             cx="64"
             cy="64"
             r={radius}
-            stroke="currentColor"
+            stroke="#f1f5f9"
             strokeWidth="8"
             fill="transparent"
-            className="text-slate-50 dark:text-slate-800"
           />
           <circle
             cx="64"
@@ -62,17 +69,20 @@ const ProgressRing = ({ value, target, label, icon, color, unit }: ProgressRingP
           />
         </svg>
         <div className="absolute flex flex-col items-center transition-transform group-hover:scale-110">
-          <div className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 mb-1">
+          <div className="p-2 rounded-full bg-slate-50 mb-1">
             {icon}
           </div>
-          <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{value.toLocaleString()}</span>
+          <span className="text-xl font-bold text-slate-800">{value.toLocaleString()}</span>
           <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">{unit}</span>
         </div>
       </div>
       <div className="mt-4 text-center">
-        <h3 className="font-bold text-slate-700 dark:text-slate-300">{label}</h3>
-        <div className="flex items-center gap-1 mt-1">
-          <div className="h-1 w-12 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+        <h3 className="font-bold text-slate-700">{label}</h3>
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+          {getEncouragement()}
+        </p>
+        <div className="flex items-center gap-1 mt-2">
+          <div className="h-1 w-12 bg-slate-100 rounded-full overflow-hidden">
             <div 
               className="h-full transition-all duration-1000" 
               style={{ width: `${percentage}%`, backgroundColor: color }}
