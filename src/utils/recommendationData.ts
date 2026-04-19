@@ -9,7 +9,37 @@ export const fitnessTemplates = [
   { id: 'weight_int_1', goal: 'Weight Management', level: 'Intermediate', activity: 'HIIT Circuit', duration: '35 min', difficulty: 'Challenging', exercises: 'Burpees 45s, Mountain Climbers 45s, Jump Squats 45s, 15s rest' },
   { id: 'energy_beg_1', goal: 'More Energy', level: 'Beginner', activity: 'Morning Flow', duration: '20 min', difficulty: 'Light', exercises: 'Sun Salutations, Cat-Cow, Bird-Dog, Child\'s Pose' },
   { id: 'sleep_beg_1', goal: 'Better Sleep', level: 'Beginner', activity: 'Yin Yoga', duration: '25 min', difficulty: 'Light', exercises: 'Forward Fold, Pigeon Pose, Reclined Twist, Savasana' },
-  
+  { id: 'muscle_beg_2', goal: 'Muscle Gain', level: 'Beginner', activity: 'Resistance Bands Strength', duration: '35 min', difficulty: 'Moderate', exercises: 'Band Squats 3x12, Band Rows 3x12, Pushups 3xMax, Glute Bridge 3x15' },
+
+{ id: 'muscle_int_2', goal: 'Muscle Gain', level: 'Intermediate', activity: 'Push Day', duration: '55 min', difficulty: 'Challenging', exercises: 'Bench Press 4x8, Shoulder Press 4x10, Tricep Dips 3x12, Cable Fly 3x15' },
+
+{ id: 'muscle_adv_2', goal: 'Muscle Gain', level: 'Advanced', activity: 'Pull Day', duration: '70 min', difficulty: 'Intense', exercises: 'Deadlift 5x5, Pullups 4x12, Barbell Rows 4x10, Face Pulls 4x15' },
+
+{ id: 'weight_beg_2', goal: 'Weight Management', level: 'Beginner', activity: 'Low Impact Cardio', duration: '30 min', difficulty: 'Light', exercises: 'Stationary Bike steady pace + mobility warmup' },
+
+{ id: 'weight_int_2', goal: 'Weight Management', level: 'Intermediate', activity: 'Fat Burn Ladder', duration: '40 min', difficulty: 'Challenging', exercises: 'Jump Rope, Lunges, Pushups ladder intervals' },
+
+{ id: 'weight_adv_1', goal: 'Weight Management', level: 'Advanced', activity: 'Metabolic Conditioning', duration: '50 min', difficulty: 'Intense', exercises: 'Kettlebell Swings, Burpees, Thrusters circuits' },
+
+{ id: 'energy_int_1', goal: 'More Energy', level: 'Intermediate', activity: 'Mobility + Core Activation', duration: '25 min', difficulty: 'Moderate', exercises: 'Dead Bugs, Hip Circles, Side Planks, Bird Dog' },
+
+{ id: 'energy_adv_1', goal: 'More Energy', level: 'Advanced', activity: 'Explosive Activation', duration: '30 min', difficulty: 'Challenging', exercises: 'Box Jumps, Medicine Ball Throws, Sprint Intervals' },
+
+{ id: 'sleep_int_1', goal: 'Better Sleep', level: 'Intermediate', activity: 'Evening Stretch Routine', duration: '30 min', difficulty: 'Light', exercises: 'Hamstring Stretch, Thoracic Rotation, Neck Mobility' },
+
+{ id: 'sleep_adv_1', goal: 'Better Sleep', level: 'Advanced', activity: 'Parasympathetic Reset Flow', duration: '35 min', difficulty: 'Moderate', exercises: 'Deep Breathing Flow + Yoga Stretch Sequence' },
+
+{ id: 'mobility_beg_1', goal: 'Flexibility', level: 'Beginner', activity: 'Joint Mobility Flow', duration: '20 min', difficulty: 'Light', exercises: 'Neck Rolls, Shoulder Rotations, Hip Circles' },
+
+{ id: 'mobility_int_1', goal: 'Flexibility', level: 'Intermediate', activity: 'Dynamic Stretching', duration: '30 min', difficulty: 'Moderate', exercises: 'Walking Lunges, Arm Swings, Leg Swings' },
+
+{ id: 'mobility_adv_1', goal: 'Flexibility', level: 'Advanced', activity: 'Deep Stretch Protocol', duration: '40 min', difficulty: 'Moderate', exercises: 'PNF Stretching Hamstrings & Hips' },
+
+{ id: 'office_beg_1', goal: 'Posture Correction', level: 'Beginner', activity: 'Desk Relief Flow', duration: '15 min', difficulty: 'Light', exercises: 'Chin Tucks, Shoulder Rolls, Wall Slides' },
+
+{ id: 'office_int_1', goal: 'Posture Correction', level: 'Intermediate', activity: 'Upper Back Strength', duration: '30 min', difficulty: 'Moderate', exercises: 'Band Pull Aparts, Reverse Fly, Rows' },
+
+{ id: 'office_adv_1', goal: 'Posture Correction', level: 'Advanced', activity: 'Postural Strength Builder', duration: '45 min', difficulty: 'Challenging', exercises: 'Face Pulls, Deadlift Patterning, Core Stability Work' },
   // ... Imagine 30+ more variations here, categorized by age and lifestyle
 ];
 
