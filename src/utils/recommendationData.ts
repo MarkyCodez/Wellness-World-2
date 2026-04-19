@@ -47,7 +47,25 @@ export const fitnessTemplates = [
 export const nutritionTemplates = [
   { id: 'nutri_muscle_1', goal: 'Muscle Gain', type: 'High Protein', breakfast: 'Egg White Omelette with Spinach', lunch: 'Grilled Chicken & Quinoa', dinner: 'Salmon with Sweet Potato', snack: 'Protein Shake & Walnuts' },
   { id: 'nutri_weight_1', goal: 'Weight Management', type: 'Calorie Controlled', breakfast: 'Greek Yogurt with Berries', lunch: 'Tuna Salad Wrap', dinner: 'Baked Cod with Asparagus', snack: 'Apple Slices with Almond Butter' },
-  { id: 'nutri_energy_1', goal: 'More Energy', type: 'Balanced Macros', breakfast: 'Overnight Oats with Chia', lunch: 'Chickpea & Avocado Salad', dinner: 'Lentil Stew with Kale', snack: 'Hummus & Carrot Sticks' },
+  { id: 'nutri_energy_1', goal: 'More Energy', type: 'Balanced Macros', breakfast: 'Overnight Oats with Chia', lunch: 'Chickpea & Avocado Salad', dinner: 'Lentil Stew with Kale', snack: 'Hummus & Carrot Sticks' },{ id: 'nutri_muscle_2', goal: 'Muscle Gain', type: 'High Protein', breakfast: 'Scrambled Eggs + Oats', lunch: 'Turkey Rice Bowl', dinner: 'Beef Stir Fry', snack: 'Greek Yogurt + Almonds' },
+
+{ id: 'nutri_muscle_3', goal: 'Muscle Gain', type: 'High Protein', breakfast: 'Protein Pancakes', lunch: 'Chicken Burrito Bowl', dinner: 'Grilled Fish + Brown Rice', snack: 'Protein Smoothie' },
+
+{ id: 'nutri_weight_2', goal: 'Weight Management', type: 'Low Carb', breakfast: 'Boiled Eggs + Avocado', lunch: 'Chicken Salad', dinner: 'Zucchini Noodles + Shrimp', snack: 'Mixed Nuts' },
+
+{ id: 'nutri_weight_3', goal: 'Weight Management', type: 'Balanced Calories', breakfast: 'Oatmeal + Banana', lunch: 'Lentil Wrap', dinner: 'Grilled Chicken Veggies', snack: 'Fruit Bowl' },
+
+{ id: 'nutri_energy_2', goal: 'More Energy', type: 'Complex Carbs Focus', breakfast: 'Banana Oat Smoothie', lunch: 'Sweet Potato Bowl', dinner: 'Quinoa Veggie Plate', snack: 'Dates + Nuts' },
+
+{ id: 'nutri_energy_3', goal: 'More Energy', type: 'Iron Rich', breakfast: 'Spinach Omelette', lunch: 'Chickpea Salad', dinner: 'Beef & Kale', snack: 'Pumpkin Seeds' },
+
+{ id: 'nutri_sleep_1', goal: 'Better Sleep', type: 'Magnesium Rich', breakfast: 'Banana Smoothie', lunch: 'Spinach Wrap', dinner: 'Salmon + Brown Rice', snack: 'Almonds' },
+
+{ id: 'nutri_sleep_2', goal: 'Better Sleep', type: 'Light Dinner Focus', breakfast: 'Greek Yogurt', lunch: 'Chicken Salad', dinner: 'Vegetable Soup', snack: 'Chamomile Tea + Walnuts' },
+
+{ id: 'nutri_veg_1', goal: 'Muscle Gain', type: 'Vegetarian Protein', breakfast: 'Tofu Scramble', lunch: 'Lentil Bowl', dinner: 'Paneer Stir Fry', snack: 'Peanut Butter Toast' },
+
+{ id: 'nutri_veg_2', goal: 'Weight Management', type: 'Vegetarian Low Calorie', breakfast: 'Fruit Yogurt Bowl', lunch: 'Veggie Wrap', dinner: 'Dal + Mixed Veggies', snack: 'Roasted Chickpeas' },
   // ... 30+ more variations
 ];
 
@@ -55,7 +73,7 @@ export const nutritionTemplates = [
 export const mindTemplates = [
   { id: 'mind_stress_1', goal: 'Stress Reduction', activity: 'Box Breathing', duration: '5 min', why: 'Resets the nervous system instantly.' },
   { id: 'mind_sleep_1', goal: 'Better Sleep', activity: 'Digital Detox', duration: '60 min', why: 'Reduces blue light exposure for melatonin.' },
-  { id: 'mind_energy_1', goal: 'More Energy', activity: 'Gratitude Journaling', duration: '10 min', why: 'Shifts focus to positive momentum.' },
+  { id: 'mind_energy_1', goal: 'More Energy', activity: 'Gratitude Journaling', duration: '10 min', why: 'Shifts focus to positive momentum.' },,
   // ... 20+ more variations
 ];
 
