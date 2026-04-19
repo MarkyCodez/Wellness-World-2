@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Zap, Apple, Scale } from 'lucide-react';
+import { Sparkles, Zap, Apple, Scale, TrendingUp } from 'lucide-react';
 
 interface NutritionAnalysisProps {
   logs: any[];
@@ -13,33 +13,39 @@ const NutritionAnalysis = ({ logs, profile }: NutritionAnalysisProps) => {
   const getInsights = () => {
     const insights = [];
     const goals = profile?.goals || [];
+    const primaryGoal = goals[0] || "More Energy";
     const recentLogsCount = logs.length;
 
-    if (recentLogsCount < 5) {
+    // Goal-specific insights
+    if (primaryGoal === "Muscle Gain") {
       insights.push({
-        icon: <Apple className="w-5 h-5 text-emerald-500" />,
-        text: "Logging more consistently helps us tailor your plan. Try to log at least 3 items today!"
+        icon: <Zap className="w-5 h-5 text-amber-500" />,
+        text: "To support your muscle-building goal, we've increased protein density in your plan. Focus on those post-workout meals!"
+      });
+    } else if (primaryGoal === "Weight Management") {
+      insights.push({
+        icon: <Scale className="w-5 h-5 text-emerald-500" />,
+        text: "We've prioritized high-volume, low-calorie foods today to keep you satisfied while reaching your weight goals."
       });
     }
 
-    if (goals.includes('Muscle Gain')) {
+    // Behavioral insights based on logs
+    if (recentLogsCount < 3) {
       insights.push({
-        icon: <Zap className="w-5 h-5 text-amber-500" />,
-        text: "To support muscle growth, focus on high-quality protein sources like Greek yogurt or lentils today."
+        icon: <Apple className="w-5 h-5 text-rose-500" />,
+        text: "Logging your meals helps us understand your energy patterns better. Try to log your next snack!"
+      });
+    } else {
+      insights.push({
+        icon: <TrendingUp className="w-5 h-5 text-emerald-500" />,
+        text: "Great job logging consistently! Your data shows you're building a mindful relationship with food."
       });
     }
 
     if (goals.includes('More Energy')) {
       insights.push({
         icon: <Sparkles className="w-5 h-5 text-indigo-500" />,
-        text: "Your energy levels thrive on complex carbs. Consider oats or quinoa for your next meal."
-      });
-    }
-
-    if (insights.length === 0) {
-      insights.push({
-        icon: <Scale className="w-5 h-5 text-emerald-500" />,
-        text: "You're doing a great job maintaining balance! Keep focusing on whole, unprocessed foods."
+        text: "Based on your energy goals, we've added more complex carbs in the morning to prevent mid-day slumps."
       });
     }
 
