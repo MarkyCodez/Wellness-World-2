@@ -10,7 +10,7 @@ import DailyMindRecommendation from '@/components/mind/DailyMindRecommendation';
 import MoodCheckIn from '@/components/dashboard/MoodCheckIn';
 import WellnessTip from '@/components/dashboard/WellnessTip';
 import { Loader2, Sparkles, Heart, Wind, PenLine, TreePine, Moon, Sun, Coffee, X, CheckCircle2 } from 'lucide-react';
-import { getPersonalizedPlan } from '@/utils/recommendationData';
+import { getPersonalizedPlan, mindTemplates } from '@/utils/recommendationData';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ const Mind = () => {
   const [plan, setPlan] = useState<any[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const [showTools, setShowTools] = useState(false);
+  const [isLogging, setIsLogging] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -57,21 +58,27 @@ const Mind = () => {
   }, []);
 
   const handleLogActivity = async (activity: any) => {
+    setIsLogging(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       
       const today = new Date().toISOString().split('T')[0];
-      await supabase.from('daily_logs').upsert({
+      const { error } = await supabase.from('daily_logs').upsert({
         user_id: user.id,
         date: today,
         mood: logs[0]?.mood || 'Happy'
       }, { onConflict: 'user_id,date' });
 
+      if (error) throw error;
+
       showSuccess(`Mindful moment logged! You're building great mental resilience.`);
       setSelectedActivity(null);
+      fetchData();
     } catch (error: any) {
       showError(error.message);
+    } finally {
+      setIsLogging(false);
     }
   };
 
@@ -92,8 +99,12 @@ const Mind = () => {
       <div className="space-y-8 animate-in fade-in duration-500 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100">Your Mind Plan</h1>
-            <p className="text-slate-500 dark:text-slate-400 font-medium">Nurture your mental clarity and emotional balance.</p>
+            <div className="flex items-center gap-2 text-indigo-500 mb-1">
+              <Sparkles className="w-5 h-5" />
+              <span className="text-xs font-black uppercase tracking-widest">Nurture Your Inner Peace</span>
+            </div>
+            <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100">Your Mind & Soul Plan</h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Personalized mental wellness for your {profile?.goals?.[0] || 'journey'}.</p>
           </div>
         </div>
 
@@ -107,7 +118,7 @@ const Mind = () => {
             
             <div className="space-y-4">
               <div className="flex items-center gap-2 px-2">
-                <Sparkles className="w-5 h-5 text-indigo-500" />
+                <Heart className="w-5 h-5 text-indigo-500" />
                 <h3 className="font-bold text-slate-800 dark:text-slate-100">Your 7-Day Mind Plan</h3>
               </div>
               <div className="grid grid-cols-1 gap-4">
@@ -154,7 +165,7 @@ const Mind = () => {
             <WellnessTip />
             <Button 
               variant="outline" 
-              className="w-full rounded-2xl py-6 border-indigo-100 text-indigo-600 hover:bg-indigo-50"
+              className="w-full rounded-2xl py-6 border-indigo-100 text-indigo-600 hover:bg-indigo-50 font-bold"
               onClick={() => setShowTools(true)}
             >
               Explore More Tools <Sparkles className="w-4 h-4 ml-2" />
@@ -193,44 +204,51 @@ const Mind = () => {
 
             <Button 
               onClick={() => handleLogActivity(selectedActivity)}
+              disabled={isLogging}
               className="w-full bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl py-8 text-lg font-bold shadow-lg shadow-indigo-100 dark:shadow-none"
             >
-              Log This Moment
+              {isLogging ? <Loader2 className="w-5 h-5 animate-spin" /> : "Log This Moment"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Tools Modal */}
+      {/* Explore More Tools Modal */}
       <Dialog open={showTools} onOpenChange={setShowTools}>
-        <DialogContent className="max-w-xl rounded-[2.5rem] p-8 border-none">
+        <DialogContent className="max-w-2xl rounded-[2.5rem] p-8 border-none">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-indigo-500" /> Mental Wellness Tools
+              <Sparkles className="w-6 h-6 text-indigo-500" /> Mental Wellness Library
             </DialogTitle>
             <DialogDescription className="text-slate-500 pt-2">
               Additional activities to support your {profile?.goals?.[0]} journey.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            {[
-              { title: "Digital Detox", desc: "Put your phone away for 15 mins.", icon: <Moon className="w-4 h-4" /> },
-              { title: "Hydration Hit", desc: "Drink a full glass of water now.", icon: <Coffee className="w-4 h-4" /> },
-              { title: "Nature Connection", desc: "Find a plant or look out a window.", icon: <TreePine className="w-4 h-4" /> },
-              { title: "Gratitude Hit", desc: "Think of one person you appreciate.", icon: <Heart className="w-4 h-4" /> }
-            ].map((tool, i) => (
-              <div key={i} className="flex items-start gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center shrink-0 text-indigo-500">
-                  {tool.icon}
-                </div>
-                <div>
-                  <h4 className="font-bold text-slate-800 dark:text-slate-100">{tool.title}</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{tool.desc}</p>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6 max-h-[60vh] overflow-y-auto pr-2">
+            {mindTemplates.slice(0, 12).map((tool, i) => (
+              <Card 
+                key={i} 
+                className="rounded-2xl border-none bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all cursor-pointer group"
+                onClick={() => {
+                  setSelectedActivity({...tool, why: `This ${tool.activity.toLowerCase()} is a great addition to your routine for ${tool.goal.toLowerCase()}.`});
+                  setShowTools(false);
+                }}
+              >
+                <CardContent className="p-4 flex items-start gap-3">
+                  <div className="w-8 h-8 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center shrink-0 text-indigo-500 shadow-sm">
+                    {tool.activity.includes('Breath') ? <Wind className="w-4 h-4" /> : 
+                     tool.activity.includes('Journal') ? <PenLine className="w-4 h-4" /> :
+                     <Heart className="w-4 h-4" />}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100">{tool.activity}</h4>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-2">{tool.why}</p>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
-          <Button onClick={() => setShowTools(false)} className="w-full rounded-xl">Close</Button>
+          <Button onClick={() => setShowTools(false)} className="w-full rounded-xl font-bold">Close Library</Button>
         </DialogContent>
       </Dialog>
     </AppLayout>
