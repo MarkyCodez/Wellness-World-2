@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { AppLayout } from '../components/layout/AppLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import TrendChart from '../components/dashboard/TrendChart';
 import LogActivity from '../components/dashboard/LogActivity';
 import GoalTracker from '../components/dashboard/GoalTracker';
@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Fitness = () => {
   const [goals, setGoals] = useState<any[]>([]);
-  navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGoals = async () => {
