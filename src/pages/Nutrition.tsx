@@ -8,10 +8,12 @@ import FoodLogger from '@/components/nutrition/FoodLogger';
 import NutritionOverview from '@/components/nutrition/NutritionOverview';
 import DailyNutriRecommendation from '@/components/nutrition/DailyNutriRecommendation';
 import StreakCounter from '@/components/dashboard/StreakCounter';
-import { Loader2, UtensilsCrossed, Coffee, Sun, Moon, Apple, Info, Check } from 'lucide-react';
+import { Loader2, UtensilsCrossed, Coffee, Sun, Moon, Apple, Info, Check, X, ChefHat, Sparkles } from 'lucide-react';
 import { getPersonalizedPlan } from '@/utils/recommendationData';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { showSuccess, showError } from '@/utils/toast';
 
 const Nutrition = () => {
@@ -19,6 +21,8 @@ const Nutrition = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [plan, setPlan] = useState<any[]>([]);
+  const [selectedMeal, setSelectedMeal] = useState<any>(null);
+  const [showTips, setShowTips] = useState(false);
   const [loggingId, setLoggingId] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -48,17 +52,18 @@ const Nutrition = () => {
     fetchData();
   }, []);
 
-  const handleLogMeal = async (mealTitle: string, mealType: string, id: string) => {
+  const handleLogMeal = async (meal: any, id: string) => {
     setLoggingId(id);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       const { error } = await supabase.from('nutrition_logs').insert({
         user_id: user?.id,
-        food_item: mealTitle,
-        meal_type: mealType.toLowerCase()
+        food_item: meal.title,
+        meal_type: meal.type.toLowerCase()
       });
       if (error) throw error;
-      showSuccess(`Logged ${mealTitle}! Your body is thanking you.`);
+      showSuccess(`Logged ${meal.title}! Your body is thanking you.`);
+      setSelectedMeal(null);
       fetchData();
     } catch (error: any) {
       showError(error.message);
@@ -97,7 +102,9 @@ const Nutrition = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <NutritionAnalysis logs={logs} profile={profile} />
-            <DailyNutriRecommendation profile={profile} />
+            <div onClick={() => setShowTips(true)}>
+              <DailyNutriRecommendation profile={profile} />
+            </div>
             
             <div className="space-y-6">
               {plan.map((dayPlan, i) => (
@@ -114,7 +121,11 @@ const Nutrition = () => {
                       { type: 'Dinner', icon: <Moon className="w-4 h-4" />, title: dayPlan.dinner },
                       { type: 'Snack', icon: <Apple className="w-4 h-4" />, title: dayPlan.snack }
                     ].map((meal, idx) => (
-                      <Card key={idx} className="rounded-[2rem] border-none shadow-sm bg-white dark:bg-slate-900 overflow-hidden group hover:shadow-md transition-all">
+                      <Card 
+                        key={idx} 
+                        className="rounded-[2rem] border-none shadow-sm bg-white dark:bg-slate-900 overflow-hidden group hover:shadow-md transition-all cursor-pointer"
+                        onClick={() => setSelectedMeal({...meal, why: dayPlan.why, recipe: dayPlan.recipe})}
+                      >
                         <CardContent className="p-6">
                           <div className="flex justify-between items-start mb-3">
                             <div className="flex items-center gap-2">
@@ -123,16 +134,9 @@ const Nutrition = () => {
                               </div>
                               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{meal.type}</span>
                             </div>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-8 rounded-full text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                              onClick={() => handleLogMeal(meal.title, meal.type, `${i}-${idx}`)}
-                              disabled={loggingId === `${i}-${idx}`}
-                            >
-                              {loggingId === `${i}-${idx}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3 mr-1" />}
-                              Log
-                            </Button>
+                            <div className="h-8 w-8 rounded-full flex items-center justify-center text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <ChefHat className="w-4 h-4" />
+                            </div>
                           </div>
                           <h5 className="font-bold text-slate-800 dark:text-slate-100 mb-2">{meal.title}</h5>
                           <div className="flex items-start gap-2 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl">
@@ -161,6 +165,75 @@ const Nutrition = () => {
           </div>
         </div>
       </div>
+
+      {/* Meal Detail Modal */}
+      <Dialog open={!!selectedMeal} onOpenChange={() => setSelectedMeal(null)}>
+        <DialogContent className="max-w-2xl rounded-[2.5rem] p-0 overflow-hidden border-none">
+          <div className="relative h-48 bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+            <ChefHat className="w-20 h-20 text-white/30" />
+            <div className="absolute bottom-4 left-6">
+              <Badge className="bg-white/20 backdrop-blur-md text-white border-none mb-2">
+                {selectedMeal?.type}
+              </Badge>
+              <h2 className="text-3xl font-black text-white">{selectedMeal?.title}</h2>
+            </div>
+          </div>
+          
+          <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+            <div className="space-y-3">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Why this fits your goals</h3>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
+                {selectedMeal?.why}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Recipe & Ingredients</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                {selectedMeal?.recipe}
+              </p>
+            </div>
+
+            <Button 
+              onClick={() => handleLogMeal(selectedMeal, 'modal')}
+              disabled={loggingId === 'modal'}
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl py-8 text-lg font-bold shadow-lg shadow-emerald-100 dark:shadow-none"
+            >
+              {loggingId === 'modal' ? <Loader2 className="w-5 h-5 animate-spin" /> : "Log This Meal"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tips Modal */}
+      <Dialog open={showTips} onOpenChange={setShowTips}>
+        <DialogContent className="max-w-xl rounded-[2.5rem] p-8 border-none">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-amber-400" /> Personalized Nutrition Tips
+            </DialogTitle>
+            <DialogDescription className="text-slate-500 pt-2">
+              Extra advice tailored to your {profile?.goals?.[0]} journey.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {[
+              "Drink 500ml of water before every meal to boost metabolism.",
+              "Focus on chewing each bite 20 times for better digestion.",
+              "Try to eat your last meal at least 3 hours before bedtime.",
+              "Add a handful of leafy greens to every lunch and dinner."
+            ].map((tip, i) => (
+              <div key={i} className="flex items-start gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                <div className="w-6 h-6 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center shrink-0">
+                  <Check className="w-3 h-3 text-emerald-500" />
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-300">{tip}</p>
+              </div>
+            ))}
+          </div>
+          <Button onClick={() => setShowTips(false)} className="w-full rounded-xl">Got it!</Button>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };
