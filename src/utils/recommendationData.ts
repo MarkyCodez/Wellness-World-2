@@ -73,7 +73,25 @@ export const nutritionTemplates = [
 export const mindTemplates = [
   { id: 'mind_stress_1', goal: 'Stress Reduction', activity: 'Box Breathing', duration: '5 min', why: 'Resets the nervous system instantly.' },
   { id: 'mind_sleep_1', goal: 'Better Sleep', activity: 'Digital Detox', duration: '60 min', why: 'Reduces blue light exposure for melatonin.' },
-  { id: 'mind_energy_1', goal: 'More Energy', activity: 'Gratitude Journaling', duration: '10 min', why: 'Shifts focus to positive momentum.' },,
+  { id: 'mind_energy_1', goal: 'More Energy', activity: 'Gratitude Journaling', duration: '10 min', why: 'Shifts focus to positive momentum.' },{ id: 'mind_stress_2', goal: 'Stress Reduction', activity: '4-7-8 Breathing', duration: '5 min', why: 'Activates parasympathetic nervous system quickly.' },
+
+{ id: 'mind_stress_3', goal: 'Stress Reduction', activity: 'Nature Walk', duration: '20 min', why: 'Reduces cortisol levels naturally.' },
+
+{ id: 'mind_energy_2', goal: 'More Energy', activity: 'Cold Splash Routine', duration: '2 min', why: 'Stimulates alertness instantly.' },
+
+{ id: 'mind_energy_3', goal: 'More Energy', activity: 'Goal Visualization', duration: '8 min', why: 'Improves motivation circuits.' },
+
+{ id: 'mind_sleep_2', goal: 'Better Sleep', activity: 'Body Scan Meditation', duration: '10 min', why: 'Relaxes muscle tension progressively.' },
+
+{ id: 'mind_sleep_3', goal: 'Better Sleep', activity: 'Night Journaling', duration: '10 min', why: 'Clears cognitive overload before sleep.' },
+
+{ id: 'mind_focus_1', goal: 'Focus Improvement', activity: 'Pomodoro Planning', duration: '5 min', why: 'Improves productivity cycles.' },
+
+{ id: 'mind_focus_2', goal: 'Focus Improvement', activity: 'Single Task Drill', duration: '15 min', why: 'Strengthens deep work ability.' },
+
+{ id: 'mind_confidence_1', goal: 'Confidence Boost', activity: 'Power Posture Practice', duration: '3 min', why: 'Improves hormonal balance temporarily.' },
+
+{ id: 'mind_confidence_2', goal: 'Confidence Boost', activity: 'Affirmation Repetition', duration: '5 min', why: 'Strengthens positive identity beliefs.' },
   // ... 20+ more variations
 ];
 
