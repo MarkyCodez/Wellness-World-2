@@ -7,44 +7,29 @@ import TrendChart from '../components/dashboard/TrendChart';
 import LogActivity from '../components/dashboard/LogActivity';
 import StreakCounter from '../components/dashboard/StreakCounter';
 import WearableConnect from '../components/dashboard/WearableConnect';
-import FoodLogger from '../components/nutrition/FoodLogger';
-import MealSuggestions from '../components/nutrition/MealSuggestions';
-import NutritionOverview from '../components/nutrition/NutritionOverview';
 import WellnessTip from '../components/dashboard/WellnessTip';
 import DashboardSkeleton from '../components/dashboard/DashboardSkeleton';
 import MoodCheckIn from '../components/dashboard/MoodCheckIn';
 import GoalTracker from '../components/dashboard/GoalTracker';
 import DailyCoach from '../components/dashboard/DailyCoach';
 import Insights from '../components/dashboard/Insights';
-import RecipeModal from '../components/nutrition/RecipeModal';
-import MindfulTools from '../components/mind/MindfulTools';
-import { ThemeToggle } from '../components/ThemeToggle';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppLayout } from '../components/layout/AppLayout';
 import { 
   Footprints, 
   Moon, 
   Zap, 
   Flame, 
-  Settings, 
-  User, 
-  Heart, 
-  Utensils, 
-  Activity,
-  ArrowRight,
-  Sparkles
+  Heart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [profile, setProfile] = useState<any>(null);
   const [dailyLog, setDailyLog] = useState<any>(null);
-  const [nutritionLogs, setNutritionLogs] = useState<any[]>([]);
   const [goals, setGoals] = useState<any[]>([]);
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] = useState(5);
   const [loading, setLoading] = useState(true);
   const [isInsightsOpen, setIsInsightsOpen] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<any>(null);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -65,7 +50,6 @@ const Dashboard = () => {
       setGoals(goalsRes.data || []);
 
       const today = new Date().toISOString().split('T')[0];
-
       const { data: logData } = await supabase
         .from('daily_logs')
         .select('*')
@@ -73,24 +57,7 @@ const Dashboard = () => {
         .eq('date', today)
         .single();
 
-      setDailyLog(logData || {
-        steps: 0,
-        active_minutes: 0,
-        sleep_hours: 0,
-        calories_burned: 0,
-        heart_rate_avg: 0
-      });
-
-      const { data: nutData } = await supabase
-        .from('nutrition_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', today)
-        .order('created_at', { ascending: false });
-
-      setNutritionLogs(nutData || []);
-      setStreak(5); 
-
+      setDailyLog(logData || { steps: 0, active_minutes: 0, sleep_hours: 0, calories_burned: 0 });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -105,227 +72,63 @@ const Dashboard = () => {
   if (loading) return <DashboardSkeleton />;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-24 md:pb-8 transition-colors duration-500">
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-6 py-4 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-rose-400 to-orange-400 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-sm">
-              <User className="w-6 h-6 text-white" />
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-lg font-black text-slate-800 dark:text-slate-100 leading-none">Wellness World</h1>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Hi, {profile?.full_name?.split(' ')[0] || 'Friend'}!</p>
-            </div>
+    <AppLayout>
+      <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100">Welcome back, {profile?.full_name?.split(' ')[0]}!</h1>
+            <p className="text-slate-500 dark:text-slate-400 font-medium">Here's how your wellness journey is looking today.</p>
           </div>
           <div className="flex items-center gap-3">
             <StreakCounter count={streak} />
-            <ThemeToggle />
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700" 
-              onClick={() => navigate('/profile')}
-              aria-label="Profile"
-            >
-              <Settings className="w-5 h-5 text-slate-400" />
-            </Button>
+            <LogActivity onSuccess={fetchData} />
           </div>
         </div>
-      </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <Tabs defaultValue="activity" className="space-y-6 sm:space-y-8">
-          <div className="flex justify-center sticky top-[73px] z-20 py-2 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-sm -mx-4 px-4">
-            <TabsList className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-1 rounded-2xl h-auto shadow-sm">
-              <TabsTrigger value="activity" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-rose-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-200 dark:data-[state=active]:shadow-none transition-all font-bold">
-                <Activity className="w-4 h-4 mr-2" /> Activity
-              </TabsTrigger>
-              <TabsTrigger value="nutrition" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-emerald-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-emerald-200 dark:data-[state=active]:shadow-none transition-all font-bold">
-                <Utensils className="w-4 h-4 mr-2" /> Nutrition
-              </TabsTrigger>
-              <TabsTrigger value="mind" className="rounded-xl px-6 py-2.5 data-[state=active]:bg-indigo-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-200 dark:data-[state=active]:shadow-none transition-all font-bold">
-                <Sparkles className="w-4 h-4 mr-2" /> Mind
-              </TabsTrigger>
-            </TabsList>
+        <div onClick={() => setIsInsightsOpen(true)}>
+          <DailyCoach 
+            steps={dailyLog?.steps || 0} 
+            sleep={dailyLog?.sleep_hours || 0} 
+            activeMinutes={dailyLog?.active_minutes || 0}
+            userName={profile?.full_name?.split(' ')[0] || 'Friend'}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <ProgressRing value={dailyLog?.steps || 0} target={10000} label="Steps" unit="steps" icon={<Footprints className="w-6 h-6 text-rose-500" />} color="#fb7185" />
+          <ProgressRing value={dailyLog?.active_minutes || 0} target={60} label="Active" unit="mins" icon={<Zap className="w-6 h-6 text-amber-500" />} color="#f59e0b" />
+          <ProgressRing value={dailyLog?.sleep_hours || 0} target={8} label="Sleep" unit="hours" icon={<Moon className="w-6 h-6 text-indigo-500" />} color="#6366f1" />
+          <ProgressRing value={dailyLog?.calories_burned || 0} target={2200} label="Burned" unit="kcal" icon={<Flame className="w-6 h-6 text-orange-500" />} color="#f97316" />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <TrendChart />
+            <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">Heart Rate Zones</h3>
+                <Heart className="w-5 h-5 text-rose-400" />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {[{ label: 'Resting', value: '62' }, { label: 'Average', value: '78' }, { label: 'Peak', value: '142' }].map((zone) => (
+                  <div key={zone.label} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-800/50 text-center">
+                    <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">{zone.label}</p>
+                    <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1">{zone.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-
-          <TabsContent value="activity" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div onClick={() => setIsInsightsOpen(true)}>
-              <DailyCoach 
-                steps={dailyLog?.steps || 0} 
-                sleep={dailyLog?.sleep_hours || 0} 
-                activeMinutes={dailyLog?.active_minutes || 0}
-                userName={profile?.full_name?.split(' ')[0] || 'Friend'}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <ProgressRing 
-                value={dailyLog?.steps || 0} 
-                target={10000} 
-                label="Steps" 
-                unit="steps"
-                icon={<Footprints className="w-6 h-6 text-rose-500" />} 
-                color="#fb7185" 
-              />
-              <ProgressRing 
-                value={dailyLog?.active_minutes || 0} 
-                target={60} 
-                label="Active" 
-                unit="mins"
-                icon={<Zap className="w-6 h-6 text-amber-500" />} 
-                color="#f59e0b" 
-              />
-              <ProgressRing 
-                value={dailyLog?.sleep_hours || 0} 
-                target={8} 
-                label="Sleep" 
-                unit="hours"
-                icon={<Moon className="w-6 h-6 text-indigo-500" />} 
-                color="#6366f1" 
-              />
-              <ProgressRing 
-                value={dailyLog?.calories_burned || 0} 
-                target={2200} 
-                label="Burned" 
-                unit="kcal"
-                icon={<Flame className="w-6 h-6 text-orange-500" />} 
-                color="#f97316" 
-              />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-              <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-                <TrendChart />
-                <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">Heart Rate Zones</h3>
-                    <Heart className="w-5 h-5 text-rose-400" />
-                  </div>
-                  <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                    {[
-                      { label: 'Resting', value: '62', unit: 'bpm', color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' },
-                      { label: 'Average', value: '78', unit: 'bpm', color: 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400' },
-                      { label: 'Peak', value: '142', unit: 'bpm', color: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400' }
-                    ].map((zone) => (
-                      <div key={zone.label} className={`p-6 rounded-3xl ${zone.color} text-center transition-transform hover:scale-105`}>
-                        <p className="text-[10px] uppercase font-bold tracking-wider opacity-70">{zone.label}</p>
-                        <p className="text-2xl sm:text-3xl font-black mt-1">{zone.value}</p>
-                        <p className="text-[10px] font-medium">{zone.unit}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-6 sm:space-y-8">
-                <div className="flex justify-between items-center px-2">
-                  <LogActivity onSuccess={fetchData} />
-                </div>
-                <MoodCheckIn />
-                <GoalTracker goals={goals} onAddGoal={() => navigate('/profile')} />
-                <WellnessTip />
-                <WearableConnect />
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="nutrition" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-gradient-to-br from-emerald-500 via-emerald-400 to-teal-400 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl shadow-emerald-200/50 dark:shadow-none relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
-              <div className="relative z-10 max-w-2xl">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
-                    Mindful Eating
-                  </div>
-                </div>
-                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Fuel your body with love.</h2>
-                <p className="text-lg opacity-90 mb-10 leading-relaxed">"Eating well is a form of self-respect. You're doing great by making conscious choices today!"</p>
-                <div className="flex flex-wrap gap-4">
-                  <Button className="bg-white text-emerald-500 hover:bg-emerald-50 rounded-xl font-bold shadow-sm px-8 py-6">
-                    Explore Recipes <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-              <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-                <MealSuggestions 
-                  goals={profile?.goals || []} 
-                  onViewRecipe={(recipe) => setSelectedRecipe(recipe)}
-                />
-              </div>
-              <div className="space-y-6 sm:space-y-8">
-                <FoodLogger onSuccess={fetchData} />
-                <NutritionOverview logs={nutritionLogs} />
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="mind" className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-gradient-to-br from-indigo-500 via-indigo-400 to-purple-400 rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl shadow-indigo-200/50 dark:shadow-none relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl" />
-              <div className="relative z-10 max-w-2xl">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
-                    Mental Wellness
-                  </div>
-                </div>
-                <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Peace begins within.</h2>
-                <p className="text-lg opacity-90 mb-10 leading-relaxed">"Your mind is a garden. Your thoughts are the seeds. You can grow flowers, or you can grow weeds."</p>
-                <div className="flex flex-wrap gap-4">
-                  <Button className="bg-white text-indigo-500 hover:bg-indigo-50 rounded-xl font-bold shadow-sm px-8 py-6">
-                    Start Meditation <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-              <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-                <MindfulTools />
-              </div>
-              <div className="space-y-6 sm:space-y-8">
-                <MoodCheckIn />
-                <div className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
-                  <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">Resilience Progress</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                    You've had <span className="font-bold text-indigo-500">4 great mood days</span> this week. You're building incredible resilience!
-                  </p>
-                  <div className="mt-6 h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-500 w-[75%] rounded-full" />
-                  </div>
-                </div>
-                <WellnessTip />
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-
+          <div className="space-y-8">
+            <MoodCheckIn />
+            <GoalTracker goals={goals} onAddGoal={() => navigate('/profile')} />
+            <WellnessTip />
+            <WearableConnect />
+          </div>
+        </div>
+      </div>
       <Insights isOpen={isInsightsOpen} onClose={() => setIsInsightsOpen(false)} />
-      <RecipeModal 
-        recipe={selectedRecipe} 
-        isOpen={!!selectedRecipe} 
-        onClose={() => setSelectedRecipe(null)} 
-      />
-
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 px-6 py-3 flex justify-around items-center md:hidden z-50 pb-safe">
-        <Button variant="ghost" className="flex flex-col gap-1 h-auto text-rose-500 hover:bg-transparent" aria-label="Home">
-          <Activity className="w-6 h-6" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Home</span>
-        </Button>
-        <Button 
-          variant="ghost" 
-          className="flex flex-col gap-1 h-auto text-slate-400 hover:bg-transparent" 
-          onClick={() => navigate('/profile')}
-          aria-label="Settings"
-        >
-          <User className="w-6 h-6" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Settings</span>
-        </Button>
-      </nav>
-    </div>
+    </AppLayout>
   );
 };
 
