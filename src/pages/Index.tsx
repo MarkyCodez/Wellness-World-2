@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import AuthForm from '@/components/auth/AuthForm';
 import Dashboard from './Dashboard';
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Heart } from 'lucide-react';
 
 const Index = () => {
@@ -51,7 +50,6 @@ const Index = () => {
           </div>
           <AuthForm />
         </div>
-        <MadeWithDyad />
       </div>
     );
   }

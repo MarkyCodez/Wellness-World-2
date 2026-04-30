@@ -33,7 +33,7 @@ const SidebarContent = ({ onItemClick }: { onItemClick?: () => void }) => (
       <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-100 dark:shadow-none">
         <Heart className="w-6 h-6 text-white fill-white" />
       </div>
-      <span className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Wellness</span>
+      <span className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Wellness World</span>
     </div>
 
     <nav className="flex-1 px-4 py-4 space-y-1">
@@ -85,7 +85,7 @@ export const Sidebar = () => {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-4 flex items-center justify-between z-50">
         <div className="flex items-center gap-2">
           <Heart className="w-6 h-6 text-emerald-500 fill-emerald-500" />
-          <span className="font-black text-slate-800 dark:text-slate-100">Wellness</span>
+          <span className="font-black text-slate-800 dark:text-slate-100">Wellness World</span>
         </div>
         <Sheet>
           <SheetTrigger asChild>

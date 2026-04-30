@@ -10,9 +10,24 @@ import { showSuccess, showError } from '@/utils/toast';
 import { syncWearableData } from '@/utils/wearableSync';
 
 const providers = [
-  { id: 'google_fit', name: 'Google Fit', color: 'hover:bg-blue-50', icon: 'https://www.gstatic.com/images/branding/product/1x/gfit_512dp.png' },
-  { id: 'apple_health', name: 'Apple Health', color: 'hover:bg-rose-50', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_Health_logo.svg/1200px-Apple_Health_logo.svg.png' },
-  { id: 'fitbit', name: 'Fitbit', color: 'hover:bg-teal-50', icon: 'https://www.fitbit.com/global/content/dam/fitbit/global/marketing-assets/logos/fitbit-logo.png' }
+  { 
+    id: 'google_fit', 
+    name: 'Google Fit', 
+    color: 'hover:bg-blue-50', 
+    icon: 'https://www.gstatic.com/images/branding/product/1x/gfit_512dp.png' 
+  },
+  { 
+    id: 'apple_health', 
+    name: 'Apple Health', 
+    color: 'hover:bg-rose-50', 
+    icon: 'https://cdn-icons-png.flaticon.com/512/822/822143.png' 
+  },
+  { 
+    id: 'fitbit', 
+    name: 'Fitbit', 
+    color: 'hover:bg-teal-50', 
+    icon: 'https://cdn-icons-png.flaticon.com/512/5968/5968852.png' 
+  }
 ];
 
 const WearableConnect = () => {
@@ -43,8 +58,6 @@ const WearableConnect = () => {
       if (!user) throw new Error("Please sign in to connect devices");
 
       if (providerId === 'google_fit') {
-        // In a production environment, this would trigger the Google OAuth flow with fitness scopes
-        // For this demo, we'll simulate the successful connection
         showSuccess("Redirecting to Google Fit authorization...");
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
@@ -75,7 +88,6 @@ const WearableConnect = () => {
       
       showSuccess("Health data synced successfully!");
       fetchConnections();
-      // Refresh the page data to show new logs
       window.dispatchEvent(new CustomEvent('healthDataSynced'));
     } catch (error: any) {
       showError("Sync failed: " + error.message);
