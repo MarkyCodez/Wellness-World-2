@@ -67,6 +67,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
+
+    // Listen for wearable sync events
+    const handleSync = () => fetchData();
+    window.addEventListener('healthDataSynced', handleSync);
+    
+    return () => window.removeEventListener('healthDataSynced', handleSync);
   }, []);
 
   if (loading) return <DashboardSkeleton />;
@@ -110,7 +116,9 @@ const Dashboard = () => {
                 <Heart className="w-5 h-5 text-rose-400" />
               </div>
               <div className="grid grid-cols-3 gap-4">
-                {[{ label: 'Resting', value: '62' }, { label: 'Average', value: '78' }, { label: 'Peak', value: '142' }].map((zone) => (
+                {[{ label: 'Resting', value: dailyLog?.heart_rate_avg ? dailyLog.heart_rate_avg - 10 : '62' }, 
+                  { label: 'Average', value: dailyLog?.heart_rate_avg || '78' }, 
+                  { label: 'Peak', value: dailyLog?.heart_rate_avg ? dailyLog.heart_rate_avg + 60 : '142' }].map((zone) => (
                   <div key={zone.label} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-800/50 text-center">
                     <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">{zone.label}</p>
                     <p className="text-2xl font-black text-slate-800 dark:text-slate-100 mt-1">{zone.value}</p>

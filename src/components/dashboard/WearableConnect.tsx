@@ -4,19 +4,21 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Smartphone, Check, Loader2, RefreshCw } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Smartphone, Check, Loader2, RefreshCw, ExternalLink } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
+import { syncWearableData } from '@/utils/wearableSync';
 
 const providers = [
-  { id: 'google_fit', name: 'Google Fit', color: 'hover:bg-blue-50' },
-  { id: 'apple_health', name: 'Apple Health', color: 'hover:bg-rose-50' },
-  { id: 'fitbit', name: 'Fitbit', color: 'hover:bg-teal-50' }
+  { id: 'google_fit', name: 'Google Fit', color: 'hover:bg-blue-50', icon: 'https://www.gstatic.com/images/branding/product/1x/gfit_512dp.png' },
+  { id: 'apple_health', name: 'Apple Health', color: 'hover:bg-rose-50', icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_Health_logo.svg/1200px-Apple_Health_logo.svg.png' },
+  { id: 'fitbit', name: 'Fitbit', color: 'hover:bg-teal-50', icon: 'https://www.fitbit.com/global/content/dam/fitbit/global/marketing-assets/logos/fitbit-logo.png' }
 ];
 
 const WearableConnect = () => {
   const [connections, setConnections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [syncing, setSyncing] = useState(false);
+  const [syncing, setSyncing] = useState<string | null>(null);
 
   useEffect(() => {
     fetchConnections();
@@ -38,7 +40,14 @@ const WearableConnect = () => {
   const handleConnect = async (providerId: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) throw new Error("Please sign in to connect devices");
+
+      if (providerId === 'google_fit') {
+        // In a production environment, this would trigger the Google OAuth flow with fitness scopes
+        // For this demo, we'll simulate the successful connection
+        showSuccess("Redirecting to Google Fit authorization...");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
 
       const { error } = await supabase
         .from('wearable_connections')
@@ -56,67 +65,91 @@ const WearableConnect = () => {
     }
   };
 
-  const handleSync = async () => {
-    setSyncing(true);
-    // Simulate sync delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setSyncing(false);
-    showSuccess("All your health data is now up to date!");
+  const handleSync = async (providerId: string) => {
+    setSyncing(providerId);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await syncWearableData(user.id, providerId);
+      
+      showSuccess("Health data synced successfully!");
+      fetchConnections();
+      // Refresh the page data to show new logs
+      window.dispatchEvent(new CustomEvent('healthDataSynced'));
+    } catch (error: any) {
+      showError("Sync failed: " + error.message);
+    } finally {
+      setSyncing(null);
+    }
   };
 
   if (loading) return null;
 
-  const isAnyConnected = connections.length > 0;
-
   return (
-    <Card className="rounded-[2.5rem] border-slate-100 shadow-sm overflow-hidden">
+    <Card className="rounded-[2.5rem] border-slate-100 shadow-sm overflow-hidden bg-white dark:bg-slate-900">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-bold text-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Smartphone className="w-5 h-5 text-rose-500" /> Devices
-          </div>
-          {isAnyConnected && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleSync} 
-              disabled={syncing}
-              className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-full h-8"
-            >
-              {syncing ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <RefreshCw className="w-3 h-3 mr-1" />}
-              Sync Now
-            </Button>
-          )}
+        <CardTitle className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <Smartphone className="w-5 h-5 text-rose-500" /> Connected Devices
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {providers.map((provider) => {
           const connection = connections.find(c => c.provider === provider.id);
           const isConnected = !!connection;
+          const isSyncing = syncing === provider.id;
+
           return (
-            <Button
+            <div 
               key={provider.id}
-              variant="outline"
-              className={`w-full justify-between rounded-2xl py-6 border-slate-100 transition-all ${provider.color} ${isConnected ? 'bg-slate-50/50' : ''}`}
-              onClick={() => !isConnected && handleConnect(provider.id)}
-              disabled={isConnected}
+              className={`p-4 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all ${isConnected ? 'bg-slate-50/50 dark:bg-slate-800/30' : 'bg-white dark:bg-slate-900'}`}
             >
-              <div className="flex flex-col items-start">
-                <span className="font-bold text-slate-700 text-sm">{provider.name}</span>
-                {isConnected && (
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    Last synced: {new Date(connection.last_synced_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg overflow-hidden bg-white p-1 shadow-sm">
+                    <img src={provider.icon} alt={provider.name} className="w-full h-full object-contain" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-800 dark:text-slate-100 text-sm">{provider.name}</p>
+                    {isConnected && (
+                      <p className="text-[10px] text-slate-400 font-medium">
+                        Synced: {new Date(connection.last_synced_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {isConnected ? (
+                  <Badge variant="secondary" className="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 border-none text-[10px] font-black uppercase">
+                    <Check className="w-3 h-3 mr-1" /> Active
+                  </Badge>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => handleConnect(provider.id)}
+                    className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-full h-8 text-[10px] font-black uppercase"
+                  >
+                    Connect <ExternalLink className="w-3 h-3 ml-1" />
+                  </Button>
                 )}
               </div>
-              {isConnected ? (
-                <div className="flex items-center gap-1 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
-                  <Check className="w-3 h-3" /> Connected
-                </div>
-              ) : (
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Connect</span>
+              
+              {isConnected && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleSync(provider.id)}
+                  disabled={!!syncing}
+                  className="w-full rounded-xl h-10 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+                >
+                  {isSyncing ? (
+                    <><Loader2 className="w-3 h-3 animate-spin mr-2" /> Syncing Data...</>
+                  ) : (
+                    <><RefreshCw className="w-3 h-3 mr-2" /> Sync Now</>
+                  )}
+                </Button>
               )}
-            </Button>
+            </div>
           );
         })}
       </CardContent>
